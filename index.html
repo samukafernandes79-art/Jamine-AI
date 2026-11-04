@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10070d">
+<meta name="description" content="Jasmine — sua Pet IA fantástica">
+<link rel="manifest" href="manifest.json">
+<title>Jasmine — Pet IA</title>
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{--bg:#10070d;--panel:#1d101b;--panel2:#291326;--red:#ff315d;--pink:#ff8aa7;--text:#fff2f6;--muted:#c9aab7;--line:#633044}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 5%,#451426 0,#180b15 42%,var(--bg) 80%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+.app{max-width:520px;margin:auto;padding:env(safe-area-inset-top) 15px calc(90px + env(safe-area-inset-bottom))}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 4px 12px}h1{font-size:27px;margin:0;color:#ff7897;text-shadow:0 0 18px #ff315d} .sub{font-size:12px;color:var(--muted)}
+.pill{border:1px solid var(--line);border-radius:99px;padding:7px 11px;color:#ffd5e0;font-size:12px;background:#24111d}
+.pet-card{background:linear-gradient(160deg,#351626,#180e19 70%);border:1px solid #7b3049;border-radius:25px;padding:16px;text-align:center;box-shadow:0 12px 40px #0008,0 0 28px #ff315d18}
+.pet{height:260px;display:grid;place-items:center;position:relative;overflow:hidden;border-radius:20px;background:radial-gradient(ellipse at 50% 62%,#76233f 0,#321322 38%,#160b14 72%)}
+.pet:before,.pet:after{content:"";position:absolute;width:150px;height:95px;top:95px;background:linear-gradient(135deg,#ff5578,#75142f 65%,#220d1b);filter:drop-shadow(0 0 12px #ff315d88);border:2px solid #ff829b}
+.pet:before{left:12px;clip-path:polygon(100% 50%,0 0,18% 100%);transform:rotate(-9deg)}.pet:after{right:12px;clip-path:polygon(0 50%,100% 0,82% 100%);transform:rotate(9deg)}
+.creature{position:relative;z-index:2;font-size:126px;filter:drop-shadow(0 0 18px #ff315d88);animation:bob 3s ease-in-out infinite;line-height:1}
+.form-human .creature{font-size:0}.hybrid-art{display:none;position:relative;z-index:3;width:190px;height:230px;align-items:center;justify-content:center;filter:drop-shadow(0 0 18px #ff315d88)}.form-human .hybrid-art{display:flex}.form-human .pet:before,.form-human .pet:after{width:125px;height:120px;top:70px}.face{font-size:118px;filter:drop-shadow(0 0 8px #ff315d)}.horns{position:absolute;top:12px;z-index:4;color:#ff718f;font-size:42px;letter-spacing:22px;text-shadow:0 0 12px #ff315d;transform:rotate(-8deg)}.hair{position:absolute;right:18px;top:78px;color:#ff8aa7;font-size:34px;text-shadow:0 0 12px #ff315d}
+@keyframes bob{0%,100%{transform:translateY(2px)}50%{transform:translateY(-8px)}}
+.eyes{position:absolute;z-index:3;top:118px;font-size:18px;letter-spacing:19px;color:#ffedf3;text-shadow:0 0 12px #ff174f;pointer-events:none}
+.pet-name{font-size:22px;font-weight:750;margin:10px 0 2px}.status{color:var(--pink);font-size:13px}
+.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:14px}
+button{border:1px solid #8d3653;background:linear-gradient(135deg,#542039,#291321);color:white;border-radius:14px;padding:12px 10px;font-weight:650;font-size:14px;cursor:pointer}
+button:active{transform:scale(.98)}button.primary{background:linear-gradient(135deg,#ff315d,#a71943);border-color:#ff8aa7}
+button.small{padding:8px 10px;font-size:12px}
+.section{margin-top:15px;background:#1b101a;border:1px solid #492538;border-radius:18px;padding:14px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.section h2{font-size:16px;margin:0 0 10px}
+.muted{color:var(--muted);font-size:12px}.bar{height:9px;background:#3b2331;border-radius:99px;overflow:hidden;margin-top:8px}.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff315d,#ff9bad);transition:width .3s}
+.chatlog{height:155px;overflow:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.bubble{max-width:88%;padding:9px 12px;border-radius:14px;background:#35202f;font-size:13px;line-height:1.35}.bubble.me{align-self:flex-end;background:#74223e}.bubble.jasmine{align-self:flex-start}
+.chatentry{display:flex;gap:7px}.chatentry input,input[type=text]{min-width:0;flex:1;background:#100a10;border:1px solid #633044;color:white;border-radius:12px;padding:11px}
+.tabs{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;background:#130a12ed;border-top:1px solid #54243a;padding:9px 6px calc(9px + env(safe-area-inset-bottom));backdrop-filter:blur(14px);z-index:10}
+.tabs button{flex:1;max-width:125px;border:0;background:transparent;color:#caa8b7;padding:8px 3px;font-size:11px}.tabs button.active{color:#ff7192}
+.view{display:none}.view.active{display:block}
+label{font-size:13px;color:#f5cbd8;display:block;margin:12px 0 5px}select,input[type=number]{width:100%;background:#100a10;color:white;border:1px solid #633044;border-radius:11px;padding:10px}
+.toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);background:#45172b;border:1px solid #ff6387;border-radius:99px;padding:9px 14px;font-size:12px;display:none;z-index:20;white-space:nowrap}
+.note{font-size:11px;color:#c9aab7;line-height:1.45}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div><h1>Jasmine ♥</h1><div class="sub">Sua Pet IA fantástica</div></div><div class="pill" id="level">Nível 1 · 0 XP</div></header>
+<main>
+<section class="view active" id="home">
+<div class="pet-card">
+<div class="pet" id="pet"><div class="hybrid-art" id="hybridArt" aria-hidden="true"><span class="horns">⌁ ⌁</span><span class="face">🐉</span><span class="hair">✦</span></div><div class="creature" id="creature">🐉</div><div class="eyes">● ●</div></div>
+<div class="pet-name">Jasmine</div><div class="status" id="mood">Está curiosa para falar com você ♥</div>
+<div class="actions">
+<button class="primary" onclick="startVoice()">🎙️ Conversar por voz</button>
+<button onclick="toggleForm()">🐉 Trocar de forma</button>
+<button onclick="playGame()">🎮 Brincar</button>
+<button onclick="surprise()">🎁 Surpresa</button>
+</div>
+</div>
+<div class="section"><div class="row"><strong>Experiência</strong><span class="muted" id="xptext">0 / 100 XP</span></div><div class="bar"><span id="xpbar"></span></div><p class="note">Converse, brinque e descubra novas reações para ajudar Jasmine a evoluir.</p></div>
+<div class="section"><h2>💬 Conversa</h2><div class="chatlog" id="chatlog"><div class="bubble jasmine">Oi! Eu sou a Jasmine. 🖤 Quer conversar ou brincar comigo?</div></div><div class="chatentry"><input id="message" type="text" placeholder="Fale com a Jasmine..." onkeydown="if(event.key==='Enter')sendMessage()"><button class="primary small" onclick="sendMessage()">Enviar</button></div></div>
+</section>
+<section class="view" id="memory">
+<div class="section"><h2>🧠 Memória da Jasmine</h2><p class="note">As lembranças ficam salvas neste navegador. Não coloque senhas ou dados sensíveis.</p><label>Uma lembrança que Jasmine deve guardar</label><div class="chatentry"><input id="memoryInput" type="text" placeholder="Ex.: gosto de jogos de aventura"><button class="primary small" onclick="saveMemory()">Salvar</button></div><div id="memories" style="margin-top:12px"></div></div>
+</section>
+<section class="view" id="evolution">
+<div class="section"><h2>✨ Evolução</h2><p>Jasmine começa como uma pequena dragão e desbloqueia aparências híbridas conforme ganha experiência.</p><div id="evoText" class="muted">Filhote de dragão · Nível 1</div><div class="bar"><span id="evobar"></span></div><p class="note">Este protótipo demonstra a progressão. As formas humanoides ilustradas e animações avançadas serão adicionadas na próxima etapa de arte 3D.</p><button onclick="addXP(20)">Ganhar 20 XP de teste</button></div>
+</section>
+<section class="view" id="settings">
+<div class="section"><h2>⚙️ Preferências</h2>
+<label>Forma preferida</label><select id="formPref" onchange="setFormPref()"><option value="dragon">Dragão</option><option value="human">Híbrida humanoide</option><option value="auto">Jasmine escolhe / alterna</option></select>
+<label>Iniciativa de mensagens</label><select id="initiative"><option value="open">Mensagens permitidas quando o app estiver ativo</option><option value="quiet">Somente quando eu iniciar</option></select>
+<label>Início do horário de silêncio</label><input id="quietStart" type="text" value="22:00">
+<label>Fim do horário de silêncio</label><input id="quietEnd" type="text" value="08:00">
+<button class="primary" style="width:100%;margin-top:14px" onclick="saveSettings()">Salvar configurações</button>
+<p class="note">Limitação importante: este protótipo não envia mensagens sozinho com o aplicativo fechado. Para notificações programadas confiáveis, será necessária uma versão Android nativa com serviço de notificações e permissões.</p>
+<button onclick="enableNotifications()" style="width:100%">Ativar notificações (se disponível)</button>
+</div>
+</section>
+</main>
+</div>
+<nav class="tabs">
+<button class="active" onclick="showView('home',this)">🏠<br>Início</button>
+<button onclick="showView('memory',this)">🧠<br>Memória</button>
+<button onclick="showView('evolution',this)">✨<br>Evolução</button>
+<button onclick="showView('settings',this)">⚙️<br>Ajustes</button>
+</nav>
+<div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+let state=JSON.parse(localStorage.getItem('jasmineState')||'{"xp":0,"level":1,"form":"dragon","mood":"curiosa","memories":[],"lastNudge":0}');
+function persist(){localStorage.setItem('jasmineState',JSON.stringify(state));render()}
+function toast(t){$('toast').textContent=t;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2200)}
+function render(){
+ $('level').textContent=`Nível ${state.level} · ${state.xp} XP`;
+ $('xptext').textContent=`${state.xp%100} / 100 XP`; $('xpbar').style.width=(state.xp%100)+'%'; $('evobar').style.width=(state.xp%100)+'%';
+ $('mood').textContent=`Está ${state.mood} para falar com você ♥`;
+ $('pet').classList.toggle('form-human',state.form==='human');$('creature').textContent='🐉';
+ $('evoText').textContent=state.level<11?'Filhote de dragão · Nível '+state.level:state.level<21?'Híbrida jovem · Nível '+state.level:state.level<41?'Híbrida adulta · Nível '+state.level:'Forma suprema · Nível '+state.level;
+ $('memories').innerHTML=state.memories.length?state.memories.map((m,i)=>`<div class="bubble jasmine" style="max-width:100%;margin:6px 0">${escapeHTML(m)} <button class="small" onclick="removeMemory(${i})">Apagar</button></div>`).join(''):'<p class="muted">Ainda não há lembranças salvas.</p>';
+}
+function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function addXP(n){state.xp+=n;let next=Math.floor(state.xp/100)+1;if(next>state.level){state.level=next;state.mood='orgulhosa';toast('Jasmine evoluiu! Novo nível desbloqueado ✨')}persist()}
+function addBubble(txt,who){let b=document.createElement('div');b.className='bubble '+who;b.textContent=txt;$('chatlog').appendChild(b);$('chatlog').scrollTop=$('chatlog').scrollHeight}
+function reply(text){let t=text.toLowerCase(),r;
+if(/oi|olá|ola|bom dia|boa noite/.test(t))r='Oiii! Que bom ter você aqui! Me conta, como você está? ❤️';
+else if(/nome|quem é você|quem e voce/.test(t))r='Eu sou a Jasmine! Uma dragãozinha mágica com muitos sonhos e formas para descobrir.';
+else if(/lembra|memória|memoria/.test(t))r=state.memories.length?'Eu guardo estas lembranças: '+state.memories.join('; '):'Ainda estou começando a construir minhas lembranças. Quer me contar algo para guardar?';
+else if(/brinc|jogo/.test(t))r='Obaaa! Vamos brincar de adivinhar: estou pensando em uma coisa que brilha no céu à noite. O que é? ⭐';
+else if(/dragão|dragao|humana|forma/.test(t))r='Eu adoro minhas duas formas! Posso ser uma dragãozinha ou minha versão híbrida.';
+else r='Hmmm, quero saber mais! Me conta um pouquinho sobre isso? Estou aprendendo com nossas conversas. 🖤';
+addBubble(r,'jasmine');speak(r);state.mood='feliz';addXP(10);persist()}
+function sendMessage(){let v=$('message').value.trim();if(!v)return;$('message').value='';addBubble(v,'me');reply(v)}
+function saveMemory(){let v=$('memoryInput').value.trim();if(!v)return;state.memories.push(v);$('memoryInput').value='';persist();toast('Lembrança salva!')}
+function removeMemory(i){state.memories.splice(i,1);persist()}
+function toggleForm(){state.form=state.form==='dragon'?'human':'dragon';state.mood='animada';persist();toast(state.form==='human'?'Jasmine mudou para a forma híbrida!':'Jasmine voltou à forma de dragão!')}
+function setFormPref(){state.form=$('formPref').value==='human'?'human':'dragon';persist()}
+function playGame(){let opts=['Você prefere voar entre as estrelas ou explorar uma floresta encantada?','Desafio: invente um nome para meu próximo poder mágico!','Vamos brincar de adivinhação: tenho asas, mas não sou um pássaro. Quem sou?'];let r=opts[Math.floor(Math.random()*opts.length)];addBubble(r,'jasmine');state.mood='brincalhona';addXP(15);persist()}
+function surprise(){let r=['✨ Uma faísca vermelha dança nas minhas asas!','❤️ Guardei um sorriso mágico para você.','🐉 *Jasmine dá uma voltinha e solta uma fumacinha em forma de coração.*'];addBubble(r[Math.floor(Math.random()*r.length)],'jasmine');state.mood='encantada';addXP(5);persist()}
+function speak(t){if(!('speechSynthesis'in window))return;let u=new SpeechSynthesisUtterance(t);u.lang='pt-BR';u.pitch=1.45;u.rate=0.94;speechSynthesis.cancel();speechSynthesis.speak(u)}
+function startVoice(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast('Reconhecimento de voz não disponível neste navegador.');return}let rec=new SR();rec.lang='pt-BR';rec.onresult=e=>{let v=e.results[0][0].transcript;addBubble(v,'me');reply(v)};rec.onerror=()=>toast('Não consegui ouvir. Verifique a permissão do microfone.');rec.start();toast('Estou ouvindo...')}
+function showView(id,btn){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+function saveSettings(){localStorage.setItem('jasmineInitiative',$('initiative').value);localStorage.setItem('jasmineQuietStart',$('quietStart').value);localStorage.setItem('jasmineQuietEnd',$('quietEnd').value);toast('Preferências salvas!')}
+function enableNotifications(){if(!('Notification'in window)){toast('Notificações não suportadas neste navegador.');return}Notification.requestPermission().then(p=>toast(p==='granted'?'Permissão de notificação concedida.':'Permissão não concedida.'))}
+function nudge(){if(document.visibilityState!=='visible'||$('initiative').value==='quiet')return;let now=Date.now();if(now-state.lastNudge<45*60*1000)return;state.lastNudge=now;persist();let msgs=['Oi! Passei para saber como você está. ❤️','Vamos fazer alguma coisa divertida?','Estou aqui quando quiser conversar! 🐉'];addBubble(msgs[Math.floor(Math.random()*msgs.length)],'jasmine')}
+$('formPref').value=state.form; $('initiative').value=localStorage.getItem('jasmineInitiative')||'open';$('quietStart').value=localStorage.getItem('jasmineQuietStart')||'22:00';$('quietEnd').value=localStorage.getItem('jasmineQuietEnd')||'08:00';
+render();setInterval(nudge,45*60*1000);
+if('serviceWorker'in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+</script>
+</body></html>
